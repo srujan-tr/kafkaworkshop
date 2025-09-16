@@ -24,6 +24,7 @@ jobs:
               if nc -z localhost 9092; then echo "Kafka is up"; break; fi
               sleep 1
             done
+            export PATH="$HOME/kafka/bin:$PATH"
             kafka-topics.sh --bootstrap-server localhost:9092 --create --topic devcontainer-smoke --partitions 1 --replication-factor 1 || true
             kafka-topics.sh --bootstrap-server localhost:9092 --list | grep -q devcontainer-smoke
             echo "hello" | kafka-console-producer.sh --bootstrap-server localhost:9092 --topic devcontainer-smoke >/dev/null

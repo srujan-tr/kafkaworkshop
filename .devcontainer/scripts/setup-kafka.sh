@@ -74,10 +74,15 @@ if [[ ! -x "${KAFKA_HOME_ABS}/bin/kafka-server-start.sh" ]]; then
 	curl -fsSL "${BASE_DL_URL_1}/${TARBALL}.sha512" -o "${TMP_SHA}" || \
 	curl -fsSL "${BASE_DL_URL_2}/${TARBALL}.sha512" -o "${TMP_SHA}"
 	if [[ -s "${TMP_SHA}" ]]; then
-		EXPECTED=$(tr -d '\n\r ' < "${TMP_SHA}")
-		ACTUAL=$(sha512sum "${TMP_TGZ}" | awk '{print $1}')
-		if [[ -n "$EXPECTED" && "$EXPECTED" != "$ACTUAL" && "$EXPECTED" != *"$ACTUAL"* ]]; then
-			echo "WARNING: SHA512 mismatch (expected begins: ${EXPECTED:0:12}, actual: ${ACTUAL:0:12}). Proceeding anyway." >&2
+		# Extract 128-hex-digit hash from common formats
+		EXPECTED=$(awk '{ for (i=1; i<=NF; i++) if ($i ~ /^[A-Fa-f0-9]{128}$/) { print tolower($i); exit } }' "${TMP_SHA}")
+		ACTUAL=$(sha512sum "${TMP_TGZ}" | awk '{print tolower($1)}')
+		if [[ -n "$EXPECTED" ]]; then
+			if [[ "$EXPECTED" != "$ACTUAL" ]]; then
+				echo "WARNING: SHA512 mismatch (expected begins: ${EXPECTED:0:12}, actual: ${ACTUAL:0:12}). Proceeding anyway." >&2
+			fi
+		else
+			echo "WARNING: Could not parse SHA512 file. Proceeding without strict verification." >&2
 		fi
 	else
 		echo "WARNING: Could not fetch SHA512. Proceeding without checksum verification." >&2

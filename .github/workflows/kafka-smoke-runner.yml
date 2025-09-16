@@ -30,6 +30,12 @@ jobs:
         run: |
           bash .devcontainer/scripts/setup-kafka.sh
 
+      - name: Add Kafka to PATH for subsequent steps
+        shell: bash
+        run: |
+          echo "KAFKA_HOME=$HOME/kafka" >> "$GITHUB_ENV"
+          echo "$HOME/kafka/bin" >> "$GITHUB_PATH"
+
       - name: Start Kafka (daemon)
         shell: bash
         run: |
