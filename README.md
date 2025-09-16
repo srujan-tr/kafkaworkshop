@@ -33,6 +33,28 @@ When your Codespace opens, containers run the setup automatically (without start
 
 Kafka CLI tools (e.g., `kafka-topics.sh`, `kafka-console-producer.sh`) are in `~/kafka/bin` and added to PATH.
 
+## Kafka UI (optional)
+A lightweight Kafka UI is installed as a jar under `~/kafka-ui` and listens on port 8080 by default.
+
+- Start UI (foreground):
+  ```bash
+  ~/kafka-ui/start-ui.sh
+  ```
+- Start UI (background):
+  ```bash
+  ~/kafka-ui/start-ui-daemon.sh
+  ```
+- UI status:
+  ```bash
+  .devcontainer/scripts/status-ui.sh
+  ```
+- Stop UI:
+  ```bash
+  ~/kafka-ui/stop-ui.sh
+  ```
+
+Open `http://localhost:8080` in the Codespaces forwarded ports to access the UI. The UI is preconfigured to connect to `localhost:9092` (PLAINTEXT).
+
 ## Example commands
 - Create a topic:
   ```bash

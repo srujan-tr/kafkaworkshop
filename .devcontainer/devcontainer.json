@@ -17,9 +17,10 @@
 		"KAFKA_HOME": "/home/vscode/kafka"
 	},
 	"forwardPorts": [
-		9092
+		9092,
+		8080
 	],
-	"onCreateCommand": "bash .devcontainer/scripts/setup-kafka.sh",
+	"onCreateCommand": "bash .devcontainer/scripts/setup-kafka.sh && bash .devcontainer/scripts/ui-setup.sh",
 	"customizations": {
 		"vscode": {
 			"extensions": [
