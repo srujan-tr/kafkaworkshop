@@ -1,0 +1,28 @@
+{
+	"name": "Kafka Workshop",
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "17"
+		},
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"username": "vscode"
+		}
+	},
+	"remoteUser": "vscode",
+	"containerEnv": {
+		"KAFKA_HOME": "/home/vscode/kafka"
+	},
+	"forwardPorts": [
+		9092
+	],
+	"onCreateCommand": "bash .devcontainer/scripts/setup-kafka.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"timonwong.shellcheck",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
+}

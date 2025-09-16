@@ -1,0 +1,34 @@
+name: Devcontainer smoke test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  devcontainer-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and run in devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: |
+            bash .devcontainer/scripts/setup-kafka.sh
+            bash .devcontainer/scripts/start-kafka-daemon.sh
+            for i in $(seq 1 60); do
+              if nc -z localhost 9092; then echo "Kafka is up"; break; fi
+              sleep 1
+            done
+            kafka-topics.sh --bootstrap-server localhost:9092 --create --topic devcontainer-smoke --partitions 1 --replication-factor 1 || true
+            kafka-topics.sh --bootstrap-server localhost:9092 --list | grep -q devcontainer-smoke
+            echo "hello" | kafka-console-producer.sh --bootstrap-server localhost:9092 --topic devcontainer-smoke >/dev/null
+            kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic devcontainer-smoke --from-beginning --timeout-ms 5000 | grep -q hello
+            bash .devcontainer/scripts/stop-kafka.sh || true
+          subFolder: .
+          push: never
+
